@@ -1,0 +1,26 @@
+{
+  "name": "vs-bond",
+  "version": "0.0.0",
+  "description": "Reduce the complexity of asynchronous code",
+  "main": "bond.js",
+  "bin": {
+    "vs-bond": "Bond.js"
+  },
+  "scripts": {
+    "test": "node bond.js test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/d-vova/vs-bond.git"
+  },
+  "keywords": [
+    "async",
+    "asynchronous",
+    "parallel",
+    "serial"
+  ],
+  "author": "Vladimir Darmin",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "gitHead": "f44c67d79ad376bb5a3d37f7d5b3feef9fd5aef2"
+}
