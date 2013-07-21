@@ -90,6 +90,18 @@ Bond.prototype.timeout = function timeout ( time ) {
   return Bond.timeout(this, time || 0);
 }
 
+Bond.prototype.valueOf = function valueOf ( ) {
+  switch ( this.progress ) {
+    case -1: return this.result.error;
+    case  1: return this.result.value;
+    default: return undefined;
+  }
+}
+
+Bond.prototype.toString = function toString ( ) {
+  return String(this.valueOf());
+}
+
 Bond.execute = function execute ( bond ) {
   if ( !bond.method ) return;
   if ( bond.progress != 0 || bond.counter != 0 ) return;

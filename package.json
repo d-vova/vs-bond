@@ -1,6 +1,6 @@
 {
   "name": "vs-bond",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Reduce the complexity of asynchronous code",
   "main": "bond.js",
   "bin": {

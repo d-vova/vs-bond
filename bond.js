@@ -1,11 +1,11 @@
 var Bond = require('./bin/Bond');
 
 var bond = module.exports = function bond ( bonds ) {
-  return new Bond(bonds);
+  return new Bond().req(bonds);
 }
 
 bond.req = function req ( bonds ) {
-  return new Bond(bonds);
+  return new Bond().req(bonds);
 }
 
 bond.obj = function obj ( instance ) {
@@ -29,7 +29,10 @@ bond.cb = Bond.CALLBACK;
 
 if ( require.main === module && process.argv[2] == 'test' ) {
   var exec = require('child_process').exec;
-  var log = function log ( error, value ) { console.log(error || value); }
+
+  var log = function log ( error, value ) {
+    console.log(error || value);
+  }
 
   exec('node bin/Bond.js', log);
 }
