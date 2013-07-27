@@ -1,19 +1,16 @@
 {
   "name": "vs-bond",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "Reduce the complexity of asynchronous code",
-  "main": "bond.js",
-  "bin": {
-    "vs-bond": "Bond.js"
-  },
+  "main": "vs-bond.js",
   "scripts": {
-    "test": "node bond.js test",
-    "start": "node bond.js"
+    "test": "node vs-bond.js test",
+    "start": "node vs-bond.js"
   },
   "dependencies": {
   },
   "engines": {
-    "node": *
+    "node": "*"
   },
   "repository": {
     "type": "git",

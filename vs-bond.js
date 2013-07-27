@@ -1,4 +1,4 @@
-var Bond = require('./bin/Bond');
+var Bond = require('./lib/Bond');
 
 var bond = module.exports = function bond ( bonds ) {
   return new Bond().req(bonds);
@@ -34,5 +34,5 @@ if ( require.main === module && process.argv[2] == 'test' ) {
     console.log(error || value);
   }
 
-  exec('node bin/Bond.js', log);
+  exec('node lib/Bond.js', log);
 }
