@@ -18,10 +18,14 @@ Quick Start
 First, define a few asynchronous functions, for example for working with MongoDB:
 
 ```
-var mongo = require('mongo');
+var mongo = require('mongodb');
 
 var connect = function connect ( connectionURI, callback ) {
   mongo.MongoClient.connect(connectionURI, callback);
+}
+
+var disconnect = function disconnect ( db, callback ) {
+  db.close(callback);
 }
 
 var createCollection = function createCollection ( db, name, callback ) {
@@ -32,12 +36,8 @@ var createDocument = function createDocument ( collection, doc, callback ) {
   collection.save(doc, callback);
 }
 
-var findAll = function findAll ( callection, callback ) {
-  collection.find({ }, callback);
-}
-
-var display = function display ( error, value ) {
-   console.log(error || value);
+var findAll = function findAll ( collection, callback ) {
+  collection.find().toArray(callback);
 }
 ```
 
@@ -55,7 +55,13 @@ var createdUsers = names.map(function ( name ) {
   return bond.obj(users).run('save', { name: name });
 });
 
-bond(createdUsers).run(findAll, users).callback(display).timeout(1000);
+var done = function done ( error, value ) {
+  console.log(error || value);
+
+  bond.run(disconnect, db);
+}
+
+bond(createdUsers).run(findAll, users).callback(done).timeout(1000);
 ```
 
 In this example we:
@@ -64,7 +70,8 @@ In this example we:
   - used the collection to create users
   - retrieved all users after creation
   - displayed retrieved users or a potential error
-  - and set a one second timeout for the whole process
+  - set a one second timeout for the whole process
+  - and finally disconnect
 
 
 License
