@@ -20,10 +20,6 @@ bond.callback = function callback ( fn ) {
   return new Bond().callback(fn);
 }
 
-bond.timeout = function timeout ( ms ) {
-  return new Bond().timeout(ms);
-}
-
 bond.cb = Bond.CALLBACK;
 
 
