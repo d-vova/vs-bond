@@ -1,7 +1,11 @@
 var Bond = require('./lib/Bond');
 
 var bond = module.exports = function bond ( bonds ) {
-  return new Bond().req(bonds);
+  return new Bond().dep(bonds);
+}
+
+bond.dep = function dep ( bonds ) {
+  return new Bond().dep(bonds);
 }
 
 bond.req = function req ( bonds ) {
