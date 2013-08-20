@@ -39,6 +39,10 @@ var createDocument = function createDocument ( collection, doc, callback ) {
 var findAll = function findAll ( collection, callback ) {
   collection.find().toArray(callback);
 }
+
+var display = function display ( error, value ) {
+  console.log(error || value);
+}
 ```
 
 Second, use bonds to write program logic in a very natural way:
@@ -55,23 +59,84 @@ var createdUsers = names.map(function ( name ) {
   return bond.obj(users).run('save', { name: name });
 });
 
-var done = function done ( error, value ) {
-  console.log(error || value);
+var allUsers = bond.req(createdUsers).run(findAll, users)
 
-  bond.run(disconnect, db);
-}
+allUsers.callback(display).timeout(1000);
 
-bond(createdUsers).run(findAll, users).callback(done).timeout(1000);
+bond.dep(allUsers).run(disconnect, db);
 ```
 
-In this example we:
-  - connected to database
+  - connected to the database
   - used the connection to create a user collection
   - used the collection to create users
   - retrieved all users after creation
   - displayed retrieved users or a potential error
   - set a one second timeout for the whole process
-  - and finally disconnect
+  - and finally, disconnected
+
+  
+Dependencies
+------------
+
+Dependencies are used when successful outcome is **not important** for execution of the dependent task
+
+```
+var bond = require('vs-bond');
+
+var majorFailure = function majorFailure ( callback ) {
+  setTimeout(function ( ) { callback('failure'); }, 5);
+}
+
+var majorSuccess = function majorSuccess ( callback ) {
+  setTimeout(function ( ) { callback(null, 'success'); }, 5);
+}
+
+var doSomething = function doSomething ( callback ) {
+  setTimeout(function ( ) { callback(); }, 5);
+}
+
+var display = function display ( error, value ) {
+  console.log( error ? 'failure' : 'success' );
+}
+
+var failure = bond.run(majorFailure);
+var success = bond.run(majorSuccess);
+
+bond.dep(failure).run(doSomething).callback(display);  // will output "success"
+bond.dep(success).run(doSomething).callback(display);  // will output "success"
+```
+
+
+Requirements
+------------
+
+Requirements are used when successful outcome is **important** for execution of the dependent task
+
+```
+var bond = require('vs-bond');
+
+var majorFailure = function majorFailure ( callback ) {
+  setTimeout(function ( ) { callback('failure'); }, 5);
+}
+
+var majorSuccess = function majorSuccess ( callback ) {
+  setTimeout(function ( ) { callback(null, 'success'); }, 5);
+}
+
+var doSomething = function doSomething ( callback ) {
+  setTimeout(function ( ) { callback(); }, 5);
+}
+
+var display = function display ( error, value ) {
+  console.log( error ? 'failure' : 'success' );
+}
+
+var failure = bond.run(majorFailure);
+var success = bond.run(majorSuccess);
+
+bond.req(failure).run(doSomething).callback(display);  // will output "failure"
+bond.req(success).run(doSomething).callback(display);  // will output "success"
+```
 
 
 License
