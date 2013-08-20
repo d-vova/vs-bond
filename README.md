@@ -50,14 +50,17 @@ Second, use bonds to write program logic in a very natural way:
 ```
 var bond = require('vs-bond');
 
+
 var db = bond.run(connect, 'mongodb://localhost/sandbox');
 var users = bond.run(createCollection, [ db, 'users' ]);
+
 
 var names = [ 'Will', 'Bill', 'Jill' ];
 
 var createdUsers = names.map(function ( name ) {
   return bond.obj(users).run('save', { name: name });
 });
+
 
 var allUsers = bond.req(createdUsers).run(findAll, users)
 
@@ -75,46 +78,16 @@ bond.dep(allUsers).run(disconnect, db);
   - and finally, disconnected
 
   
-Dependencies
-------------
+Dependencies and Requirements
+-----------------------------
 
 Dependencies are used when successful outcome is **not important** for execution of the dependent task
-
-```
-var bond = require('vs-bond');
-
-var majorFailure = function majorFailure ( callback ) {
-  setTimeout(function ( ) { callback('failure'); }, 5);
-}
-
-var majorSuccess = function majorSuccess ( callback ) {
-  setTimeout(function ( ) { callback(null, 'success'); }, 5);
-}
-
-var doSomething = function doSomething ( callback ) {
-  setTimeout(function ( ) { callback(); }, 5);
-}
-
-var display = function display ( error, value ) {
-  console.log( error ? 'failure' : 'success' );
-}
-
-var failure = bond.run(majorFailure);
-var success = bond.run(majorSuccess);
-
-bond.dep(failure).run(doSomething).callback(display);  // will output "success"
-bond.dep(success).run(doSomething).callback(display);  // will output "success"
-```
-
-
-Requirements
-------------
-
 Requirements are used when successful outcome is **important** for execution of the dependent task
 
 ```
 var bond = require('vs-bond');
 
+
 var majorFailure = function majorFailure ( callback ) {
   setTimeout(function ( ) { callback('failure'); }, 5);
 }
@@ -131,11 +104,64 @@ var display = function display ( error, value ) {
   console.log( error ? 'failure' : 'success' );
 }
 
+
 var failure = bond.run(majorFailure);
 var success = bond.run(majorSuccess);
 
+
+bond.dep(failure).run(doSomething).callback(display);  // will output "success"
+bond.dep(success).run(doSomething).callback(display);  // will output "success"
+
 bond.req(failure).run(doSomething).callback(display);  // will output "failure"
 bond.req(success).run(doSomething).callback(display);  // will output "success"
+```
+
+
+Instance
+--------
+
+Instance is used when the task must be executed inside of a given context/scope/namespace
+
+```
+var bond = require('vs-bond');
+
+
+var Context = function Context ( msg ) { this.msg = msg; }
+
+Context.prototype.test = function test ( callback ) {
+  var self = this;
+  
+  var done = function done ( ) {
+    callback(null, self.msg);
+  }
+  
+  setTimeout(done, 5);
+}
+
+Context.create = function create ( msg, callback ) {
+  var done = function done ( ) {
+    callback(null, new Context(msg));
+  }
+  
+  setTimeout(done, 5);
+}
+
+
+var display = function display ( error, value ) {
+  console.log(String(error || value));
+}
+
+
+var context = new Context('secret');
+var test1 = bond.run(context.test).callback(display);         // will output "undefined"
+var test2 = bond.obj(context).run('test').callback(display);  // will output "secret"
+```
+
+Instance object can also be a bond
+
+```
+var context = bond.run(Context.create, 'secret');
+var test3 = bond.obj(context).run('test').callback(display);  // will output "secret"
 ```
 
 
