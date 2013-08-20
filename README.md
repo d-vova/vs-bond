@@ -78,8 +78,8 @@ bond.dep(allUsers).run(disconnect, db);
   - and finally, disconnected
 
   
-Dependencies vs Requirements
-----------------------------
+Dep vs Req
+----------
 
 Dependencies are used when successful outcome is **not important** for execution of the dependent task
 
@@ -110,18 +110,18 @@ var failure = bond.run(majorFailure);
 var success = bond.run(majorSuccess);
 
 
-bond.dep(failure).run(doSomething).callback(display);  // will output "success"
-bond.dep(success).run(doSomething).callback(display);  // will output "success"
+bond.dep([ failure ]).run(doSomething).callback(display);  // will output "success"
+bond.dep([ success ]).run(doSomething).callback(display);  // will output "success"
 
-bond.req(failure).run(doSomething).callback(display);  // will output "failure"
-bond.req(success).run(doSomething).callback(display);  // will output "success"
+bond.req([ failure ]).run(doSomething).callback(display);  // will output "failure"
+bond.req([ success ]).run(doSomething).callback(display);  // will output "success"
 ```
 
 
-Instance
---------
+Obj
+---
 
-Instance is used when the task must be executed inside of a given context/scope/namespace
+Object is used when the task must be executed inside of a given context/scope/namespace
 
 ```javascript
 var bond = require('vs-bond');
@@ -163,6 +163,48 @@ Instance object can also be a bond
 ```javascript
 var context = bond.run(Context.create, 'secret');
 var test3 = bond.obj(context).run('test').callback(display);  // will output "secret"
+```
+
+
+Run
+---
+
+Run applies arguments to a method after all dependencies are done executing and all requirements are met
+
+  - Method can be represented by a function, a string, or a bond
+  - Arguments can be represented by bonds
+
+String representation of a method can only be used in conjunction with a previously specified instance of an object
+
+All bonds encountered in top level arguments and method are automatically added to the list of requirements
+and are unwrapped before execution
+
+
+Callback
+--------
+
+Execute callback on task completion (regardless of whether it was successful or not)
+
+```javascript
+var bond = require('vs-bond');
+
+
+var majorFailure = function majorFailure ( callback ) {
+  setTimeout(function ( ) { callback('failure'); }, 5);
+}
+
+var majorSuccess = function majorSuccess ( callback ) {
+  setTimeout(function ( ) { callback(null, 'success'); }, 5);
+}
+
+
+var display = function display ( error, value ) {
+  console.log( error ? 'failure' : 'success' );
+}
+
+
+var failure = bond.run(majorFailure).callback(display);  // will output failure
+var success = bond.run(majorSuccess).callback(display);  // will output success
 ```
 
 
