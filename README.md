@@ -17,7 +17,7 @@ Quick Start
 
 First, define a few asynchronous functions, for example for working with MongoDB:
 
-```
+```javascript
 var mongo = require('mongodb');
 
 var connect = function connect ( connectionURI, callback ) {
@@ -47,7 +47,7 @@ var display = function display ( error, value ) {
 
 Second, use bonds to write program logic in a very natural way:
 
-```
+```javascript
 var bond = require('vs-bond');
 
 
@@ -85,7 +85,7 @@ Dependencies are used when successful outcome is **not important** for execution
 
 Requirements are used when successful outcome is **important** for execution of the dependent task
 
-```
+```javascript
 var bond = require('vs-bond');
 
 
@@ -123,7 +123,7 @@ Instance
 
 Instance is used when the task must be executed inside of a given context/scope/namespace
 
-```
+```javascript
 var bond = require('vs-bond');
 
 
@@ -160,7 +160,7 @@ var test2 = bond.obj(context).run('test').callback(display);  // will output "se
 
 Instance object can also be a bond
 
-```
+```javascript
 var context = bond.run(Context.create, 'secret');
 var test3 = bond.obj(context).run('test').callback(display);  // will output "secret"
 ```
