@@ -78,10 +78,11 @@ bond.dep(allUsers).run(disconnect, db);
   - and finally, disconnected
 
   
-Dependencies and Requirements
------------------------------
+Dependencies vs Requirements
+----------------------------
 
 Dependencies are used when successful outcome is **not important** for execution of the dependent task
+
 Requirements are used when successful outcome is **important** for execution of the dependent task
 
 ```
